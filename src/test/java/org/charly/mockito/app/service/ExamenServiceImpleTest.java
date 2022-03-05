@@ -9,7 +9,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.mockito.invocation.InvocationOnMock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.stubbing.Answer;
 
 import static org.mockito.Mockito.*;
 
@@ -60,8 +62,19 @@ class ExamenServiceImpleTest {
 
     @Test
     void testGuardarExamen(){
-        Examen nuevoExamen = new Examen(11L, "Gym");
+        Examen nuevoExamen = new Examen(null, "Gym");
         nuevoExamen.setPreguntas(Arrays.asList("musculacion", "cardio", "calisstenia"));
+
+        when(examenRepository.guardarExamen(any(Examen.class))).then(new Answer<Examen>() {
+            Long secuencia = 8L;
+            @Override
+            public Examen answer(InvocationOnMock invocationOnMock) throws Throwable {
+                Examen examen = invocationOnMock.getArgument(0);
+                examen.setId(secuencia++);
+                return examen;
+            }
+        });
+
         service.guardar(nuevoExamen);
         assertNotNull(nuevoExamen.getId());
         verify(examenRepository).guardarExamen(any(Examen.class));
