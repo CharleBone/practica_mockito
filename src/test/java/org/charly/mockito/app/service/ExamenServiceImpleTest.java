@@ -22,24 +22,34 @@ class ExamenServiceImpleTest {
 
     @BeforeEach
     void setupMethod() {
-        ExamenRepository examenRepository = mock(ExamenRepository.class);
-        PreguntaRepository preguntaRepository = mock(PreguntaRepository.class);
-        ExamenService service = new ExamenServiceImple(examenRepository, preguntaRepository);
+        examenRepository = mock(ExamenRepository.class);
+        preguntaRepository = mock(PreguntaRepository.class);
+        service = new ExamenServiceImple(examenRepository, preguntaRepository);
     }
 
     @Test
     void buscarExamenPorNombre() {
         when(examenRepository.buscarTodo()).thenReturn(Datos.EXAMENES);
-        Optional<Examen> examen = service.buscarExamenPorNombre("Ingles");
-        assertEquals(7L, examen.orElseThrow().getId());
-        assertEquals(examen.orElseThrow().getNombre(), "Ingles");
+        Optional<Examen> examen = service.buscarExamenPorNombre("Matematicas");
+        assertEquals(5L, examen.orElseThrow().getId());
+        assertEquals(examen.orElseThrow().getNombre(), "Matematicas");
     }
 
     @Test
     void testPreguntasExamen(){
         when(examenRepository.buscarTodo()).thenReturn(Datos.EXAMENES);
-        when(preguntaRepository.buscarPreguntasPorExamenId(3L)).thenReturn(Datos.PREGUNTAS);
+        when(preguntaRepository.buscarPreguntasPorExamenId(anyLong())).thenReturn(Datos.PREGUNTAS);
         Optional<Examen> examenOptional = service.buscarExamenPorNombreConPreguntas("Matematicas");
-        System.out.println(examenOptional.orElseThrow().getPreguntas());
+        assertEquals(examenOptional.orElseThrow().getPreguntas().size(), 5L);
+        assertTrue(examenOptional.orElseThrow().getPreguntas().contains("integrales"));
+    }
+
+    @Test
+    void testPreguntasExamenVerify(){
+        when(examenRepository.buscarTodo()).thenReturn(Datos.EXAMENES);
+        when(preguntaRepository.buscarPreguntasPorExamenId(anyLong())).thenReturn(Datos.PREGUNTAS);
+        Optional<Examen> examenOptional = service.buscarExamenPorNombreConPreguntas("Matematicas");
+        verify(examenRepository).buscarTodo();
+        verify(preguntaRepository).buscarPreguntasPorExamenId(5L);
     }
 }
