@@ -31,12 +31,6 @@ class ExamenServiceImpleTest {
     @InjectMocks
     ExamenServiceImple service;
 
-    /*
-    @BeforeEach
-    void setupMethod() {
-        MockitoAnnotations.openMocks(this);
-    }
-    */
 
     @Test
     void buscarExamenPorNombre() {
