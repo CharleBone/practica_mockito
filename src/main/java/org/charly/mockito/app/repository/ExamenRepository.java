@@ -7,4 +7,6 @@ import java.util.List;
 public interface ExamenRepository {
 
     List<Examen> buscarTodo();
+
+    Examen guardarExamen(Examen examen);
 }

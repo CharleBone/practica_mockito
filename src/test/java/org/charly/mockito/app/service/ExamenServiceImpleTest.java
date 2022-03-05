@@ -5,6 +5,11 @@ import org.charly.mockito.app.repository.ExamenRepository;
 import org.charly.mockito.app.repository.PreguntaRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.mockito.Mockito.*;
 
@@ -14,18 +19,24 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@ExtendWith(MockitoExtension.class)
 class ExamenServiceImpleTest {
 
+    @Mock
     ExamenRepository examenRepository;
-    PreguntaRepository preguntaRepository;
-    ExamenService service;
 
+    @Mock
+    PreguntaRepository preguntaRepository;
+
+    @InjectMocks
+    ExamenServiceImple service;
+
+    /*
     @BeforeEach
     void setupMethod() {
-        examenRepository = mock(ExamenRepository.class);
-        preguntaRepository = mock(PreguntaRepository.class);
-        service = new ExamenServiceImple(examenRepository, preguntaRepository);
+        MockitoAnnotations.openMocks(this);
     }
+    */
 
     @Test
     void buscarExamenPorNombre() {
@@ -51,5 +62,15 @@ class ExamenServiceImpleTest {
         Optional<Examen> examenOptional = service.buscarExamenPorNombreConPreguntas("Matematicas");
         verify(examenRepository).buscarTodo();
         verify(preguntaRepository).buscarPreguntasPorExamenId(5L);
+    }
+
+    @Test
+    void testGuardarExamen(){
+        Examen nuevoExamen = new Examen(11L, "Gym");
+        nuevoExamen.setPreguntas(Arrays.asList("musculacion", "cardio", "calisstenia"));
+        service.guardar(nuevoExamen);
+        assertNotNull(nuevoExamen.getId());
+        verify(examenRepository).guardarExamen(any(Examen.class));
+        verify(preguntaRepository).guardarPreguntas(anyList());
     }
 }

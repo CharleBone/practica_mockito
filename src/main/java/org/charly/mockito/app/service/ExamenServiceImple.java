@@ -34,4 +34,12 @@ public class ExamenServiceImple implements ExamenService {
         examenOptional.orElseThrow().setPreguntas(preguntas);
         return examenOptional;
     }
+
+    @Override
+    public Examen guardar(Examen examen) {
+        if (!examen.getPreguntas().isEmpty()) {
+            preguntaRepository.guardarPreguntas(examen.getPreguntas());
+        }
+        return examenRepository.guardarExamen(examen);
+    }
 }
